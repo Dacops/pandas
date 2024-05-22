@@ -1208,6 +1208,7 @@ class ExcelWriter(Generic[_WorkbookT]):
     def _write_cells(
         self,
         cells,
+        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
@@ -1220,6 +1221,8 @@ class ExcelWriter(Generic[_WorkbookT]):
         ----------
         cells : generator
             cell of formatted data to save to Excel sheet
+        notes : dataframe
+            dataframe that holds notes to write
         sheet_name : str, default None
             Name of Excel sheet, if None, then use self.cur_sheet
         startrow : upper left cell row to dump data frame

@@ -241,6 +241,7 @@ class XlsxWriter(ExcelWriter):
     def _write_cells(
         self,
         cells,
+        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
@@ -257,6 +258,8 @@ class XlsxWriter(ExcelWriter):
 
         if validate_freeze_panes(freeze_panes):
             wks.freeze_panes(*(freeze_panes))
+
+        notes_col = None
 
         for cell in cells:
             val, fmt = self._value_with_fmt(cell.val)
@@ -281,4 +284,17 @@ class XlsxWriter(ExcelWriter):
                     style,
                 )
             else:
+                if notes_col is None:
+                    notes_col = startcol + cell.col
                 wks.write(startrow + cell.row, startcol + cell.col, val, style)
+
+        if notes is None:
+            return
+
+        for row_idx, (_, row) in enumerate(notes.iterrows()):
+            for col_idx, note in enumerate(row):
+                wks.write_comment(
+                    row_idx + 1,  # first row has columns
+                    col_idx + notes_col,  # n columns with indexes
+                    str(note),
+                )

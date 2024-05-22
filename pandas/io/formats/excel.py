@@ -554,6 +554,9 @@ class ExcelFormatter:
         self.rowcounter = 0
         self.na_rep = na_rep
         if not isinstance(df, DataFrame):
+            self.notes = None
+            if df.tooltips is not None:
+                self.notes = df.tooltips.tt_data
             self.styler = df
             self.styler._compute()  # calculate applied styles
             df = df.data
@@ -880,6 +883,9 @@ class ExcelFormatter:
             cell.val = self._format_value(cell.val)
             yield cell
 
+    def get_notes(self) -> Iterable[str]:
+        yield from self.notes.iterrows()
+
     @doc(storage_options=_shared_docs["storage_options"])
     def write(
         self,
@@ -941,6 +947,7 @@ class ExcelFormatter:
         try:
             writer._write_cells(
                 formatted_cells,
+                self.notes,
                 sheet_name,
                 startrow=startrow,
                 startcol=startcol,
