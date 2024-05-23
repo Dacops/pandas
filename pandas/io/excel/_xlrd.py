@@ -133,7 +133,7 @@ class XlrdReader(BaseExcelReader["Book"]):
         nrows = sheet.nrows
         if file_rows_needed is not None:
             nrows = min(nrows, file_rows_needed)
-                
+
         if notes is not None:
             notes_locations = dict(sheet.cell_note_map.items())
 
@@ -142,10 +142,6 @@ class XlrdReader(BaseExcelReader["Book"]):
             min_x = min(location[1] for location in notes_locations.keys())
             max_x = max(location[1] for location in notes_locations.keys())
 
-            # Create column headers
-            columns = [str(i) for i in range(min_x, max_x + 1)]
-
-            # Create empty rows
             data_notes = []
             for y in range(min_y, max_y + 1):
                 row = []
@@ -156,10 +152,8 @@ class XlrdReader(BaseExcelReader["Book"]):
                         row.append("")
                 data_notes.append(row)
 
-            # Convert data_notes to DataFrame and set columns
-            notes_df = DataFrame(data_notes, columns=columns)
+            notes_df = DataFrame(data_notes)
 
-            # Update the notes DataFrame with the new data
             for col in notes_df.columns:
                 notes[col] = notes_df[col]
 
@@ -170,4 +164,3 @@ class XlrdReader(BaseExcelReader["Book"]):
             ]
             for i in range(nrows)
         ]
-

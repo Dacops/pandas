@@ -280,7 +280,7 @@ dtype_backend : {{'numpy_nullable', 'pyarrow'}}, default 'numpy_nullable'
 
 engine_kwargs : dict, optional
     Arbitrary keyword arguments passed to excel engine.
-    
+
 notes: DataFrame, default None
     A DataFrame to hold the notes extracted from the Excel file.
 
@@ -358,12 +358,12 @@ Comment lines in the excel input file can be skipped using the
 2     None    NaN
 
 To get the comments of the excel input file, pass a ``notes`` DataFrame.
-This new DataFrame might have different dimensions than the data returned
-DataFrame since it'll only read the columns which cells have notes.
-(last column with note - first column with note + 1) *
+This DataFrame might have different dimensions than the returned DataFrame
+by ``read_excel`` since it'll only read the cells with notes. This DataFrame
+dimensions will be: (last column with note - first column with note + 1) *
 (last row with note - first row with note + 1).
 
-Cells with no notes will have an empty string ("").
+Cells with no notes inside these limits will have an empty string ("").
 
 If the data in the ``tmp.xlsx`` file was written using the
 ``set_tooltips(notes)`` method of ``Styler.to_excel``, like in
@@ -377,7 +377,7 @@ the example below:
 
 >>> df_notes = pd.DataFrame()  # doctest: +SKIP
 
->>> pd.read_excel('tmp.xlsx', df_notes)  # doctest: +SKIP
+>>> pd.read_excel('tmp.xlsx', notes=df_notes)  # doctest: +SKIP
        Name   Value
 0   string1       1
 1   string2       2
@@ -625,7 +625,9 @@ class BaseExcelReader(Generic[_WorkbookT]):
     def get_sheet_by_index(self, index: int):
         raise NotImplementedError
 
-    def get_sheet_data(self, sheet, rows: int | None = None, notes: DataFrame | None = None):
+    def get_sheet_data(
+        self, sheet, rows: int | None = None, notes: DataFrame | None = None
+    ):
         raise NotImplementedError
 
     def raise_if_bad_sheet_by_index(self, index: int) -> None:
