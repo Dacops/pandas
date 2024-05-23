@@ -100,7 +100,10 @@ class ODFReader(BaseExcelReader["OpenDocument"]):
         raise ValueError(f"sheet {name} not found")
 
     def get_sheet_data(
-        self, sheet, file_rows_needed: int | None = None
+        self,
+        sheet,
+        file_rows_needed: int | None = None,
+        notes: pd.DataFrame | None = None,
     ) -> list[list[Scalar | NaTType]]:
         """
         Parse an ODF Table into a list of lists
@@ -110,6 +113,14 @@ class ODFReader(BaseExcelReader["OpenDocument"]):
             TableCell,
             TableRow,
         )
+
+        if notes is not None:
+            raise NotImplementedError(
+                """
+                Notes are not supported in odfreader engine,
+                see https://github.com/eea/odfpy
+                """
+            )
 
         covered_cell_name = CoveredTableCell().qname
         table_cell_name = TableCell().qname

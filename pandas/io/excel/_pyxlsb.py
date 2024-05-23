@@ -20,6 +20,8 @@ if TYPE_CHECKING:
         StorageOptions,
     )
 
+    from pandas.core.frame import DataFrame
+
 
 class PyxlsbReader(BaseExcelReader["Workbook"]):
     @doc(storage_options=_shared_docs["storage_options"])
@@ -98,7 +100,16 @@ class PyxlsbReader(BaseExcelReader["Workbook"]):
         self,
         sheet,
         file_rows_needed: int | None = None,
+        notes: DataFrame | None = None,
     ) -> list[list[Scalar]]:
+        if notes is not None:
+            raise NotImplementedError(
+                """
+                Notes are not supported in pyxlsb engine,
+                see https://github.com/willtrnr/pyxlsb
+                """
+            )
+
         data: list[list[Scalar]] = []
         previous_row_number = -1
         # When sparse=True the rows can have different lengths and empty rows are

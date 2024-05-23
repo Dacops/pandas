@@ -98,8 +98,19 @@ class CalamineReader(BaseExcelReader["CalamineWorkbook"]):
         return self.book.get_sheet_by_index(index)
 
     def get_sheet_data(
-        self, sheet: CalamineSheet, file_rows_needed: int | None = None
+        self,
+        sheet: CalamineSheet,
+        file_rows_needed: int | None = None,
+        notes: pd.DataFrame | None = None,
     ) -> list[list[Scalar | NaTType | time]]:
+        if notes is not None:
+            raise NotImplementedError(
+                """
+                Notes are not supported in python-calamine engine,
+                see https://github.com/dimastbk/python-calamine/tree/master
+                """
+            )
+
         def _convert_cell(value: _CellValue) -> Scalar | NaTType | time:
             if isinstance(value, float):
                 val = int(value)
