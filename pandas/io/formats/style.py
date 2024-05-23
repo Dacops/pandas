@@ -564,7 +564,7 @@ class Styler(StylerRenderer):
 
         >>> notes = pd.DataFrame(
         ...     [["cell 1", "cell 2"], ["cell 3", "cell 4"]],
-        ... )
+        ... )  # doctest: +SKIP
         >>> df1.style.set_tooltips(notes).to_excel("output.xlsx")  # doctest: +SKIP
     """
         ),

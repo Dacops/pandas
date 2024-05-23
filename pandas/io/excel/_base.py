@@ -280,6 +280,9 @@ dtype_backend : {{'numpy_nullable', 'pyarrow'}}, default 'numpy_nullable'
 
 engine_kwargs : dict, optional
     Arbitrary keyword arguments passed to excel engine.
+    
+notes: DataFrame, default None
+    A DataFrame to hold the notes extracted from the Excel file.
 
 Returns
 -------
@@ -353,6 +356,38 @@ Comment lines in the excel input file can be skipped using the
 0  string1    1.0
 1  string2    2.0
 2     None    NaN
+
+To get the comments of the excel input file, pass a ``notes`` DataFrame.
+This new DataFrame might have different dimensions than the data returned
+DataFrame since it'll only read the columns which cells have notes.
+(last column with note - first column with note + 1) *
+(last row with note - first row with note + 1).
+
+Cells with no notes will have an empty string ("").
+
+If the data in the ``tmp.xlsx`` file was written using the
+``set_tooltips(notes)`` method of ``Styler.to_excel``, like in
+the example below:
+
+>>> notes = pd.DataFrame(
+...     [["note 1", "note 2"], ["", "note 4"], ["note 5", ""]],
+... )  # doctest: +SKIP
+
+>>> df.style.set_tooltips(notes).to_excel('tmp.xlsx')  # doctest: +SKIP
+
+>>> df_notes = pd.DataFrame()  # doctest: +SKIP
+
+>>> pd.read_excel('tmp.xlsx', df_notes)  # doctest: +SKIP
+       Name   Value
+0   string1       1
+1   string2       2
+2  #Comment       3
+
+>>> df_notes  # doctest: +SKIP
+        0       1
+0  note 1  note 2
+1          note 4
+2  note 5
 """
 )
 
