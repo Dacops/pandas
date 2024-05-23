@@ -443,11 +443,14 @@ class OpenpyxlWriter(ExcelWriter):
     def _write_cells(
         self,
         cells,
+        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
         freeze_panes: tuple[int, int] | None = None,
     ) -> None:
+        from openpyxl.comments import Comment
+
         # Write the frame cells using openpyxl.
         sheet_name = self._get_sheet_name(sheet_name)
 
@@ -484,7 +487,11 @@ class OpenpyxlWriter(ExcelWriter):
                 row=freeze_panes[0] + 1, column=freeze_panes[1] + 1
             )
 
+        notes_col = None
+
         for cell in cells:
+            if notes_col is None:
+                notes_col = startcol + cell.col + 1
             xcell = wks.cell(
                 row=startrow + cell.row + 1, column=startcol + cell.col + 1
             )
@@ -529,6 +536,19 @@ class OpenpyxlWriter(ExcelWriter):
                             xcell = wks.cell(column=col, row=row)
                             for k, v in style_kwargs.items():
                                 setattr(xcell, k, v)
+
+        if notes is None:
+            return
+
+        for row_idx, (_, row) in enumerate(notes.iterrows()):
+            for col_idx, note in enumerate(row):
+                xcell = wks.cell(
+                    row=row_idx + 2,  # openpyxl starts counting at 1, not 0
+                    column=col_idx + notes_col,
+                )
+                if note:
+                    comment = Comment(note, "")
+                    xcell.comment = comment
 
 
 class OpenpyxlReader(BaseExcelReader["Workbook"]):
