@@ -37,6 +37,8 @@ if TYPE_CHECKING:
         WriteExcelBuffer,
     )
 
+from pandas.core.frame import DataFrame
+
 
 class OpenpyxlWriter(ExcelWriter):
     _engine = "openpyxl"
@@ -626,10 +628,42 @@ class OpenpyxlReader(BaseExcelReader["Workbook"]):
         return cell.value
 
     def get_sheet_data(
-        self, sheet, file_rows_needed: int | None = None
+        self, sheet, file_rows_needed: int | None = None, notes: DataFrame | None = None
     ) -> list[list[Scalar]]:
         if self.book.read_only:
             sheet.reset_dimensions()
+
+        if notes is not None:
+            data_notes = []
+            for row in sheet.rows:
+                row_notes = [
+                    cell.comment.content if cell.comment else "" for cell in row
+                ]
+                data_notes.append(row_notes)
+
+            # trimming trailing empty rows and columns
+            while data_notes and all(cell == "" for cell in data_notes[0]):
+                data_notes.pop(0)
+
+            while data_notes and all(cell == "" for cell in data_notes[-1]):
+                data_notes.pop()
+
+            while data_notes and all(
+                cell == "" for cell in [row[0] for row in data_notes]
+            ):
+                for row in data_notes:
+                    row.pop(0)
+
+            while data_notes and all(
+                cell == "" for cell in [row[-1] for row in data_notes]
+            ):
+                for row in data_notes:
+                    row.pop()
+
+            notes_df = DataFrame(data_notes)
+
+            for col in notes_df.columns:
+                notes[col] = notes_df[col]
 
         data: list[list[Scalar]] = []
         last_row_with_data = -1

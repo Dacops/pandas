@@ -510,6 +510,10 @@ def read_excel(
     if engine_kwargs is None:
         engine_kwargs = {}
 
+        # set to false so cells have a comment attribute
+        if notes is not None and engine == "openpyxl":
+            engine_kwargs = {"read_only": False}
+
     if not isinstance(io, ExcelFile):
         should_close = True
         io = ExcelFile(
