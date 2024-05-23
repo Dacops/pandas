@@ -21,6 +21,8 @@ if TYPE_CHECKING:
         StorageOptions,
     )
 
+from pandas.core.frame import DataFrame
+
 
 class XlrdReader(BaseExcelReader["Book"]):
     @doc(storage_options=_shared_docs["storage_options"])
@@ -77,7 +79,7 @@ class XlrdReader(BaseExcelReader["Book"]):
         return self.book.sheet_by_index(index)
 
     def get_sheet_data(
-        self, sheet, file_rows_needed: int | None = None
+        self, sheet, file_rows_needed: int | None = None, notes: DataFrame | None = None
     ) -> list[list[Scalar]]:
         from xlrd import (
             XL_CELL_BOOLEAN,
@@ -131,6 +133,36 @@ class XlrdReader(BaseExcelReader["Book"]):
         nrows = sheet.nrows
         if file_rows_needed is not None:
             nrows = min(nrows, file_rows_needed)
+                
+        if notes is not None:
+            notes_locations = dict(sheet.cell_note_map.items())
+
+            min_y = min(location[0] for location in notes_locations.keys())
+            max_y = max(location[0] for location in notes_locations.keys())
+            min_x = min(location[1] for location in notes_locations.keys())
+            max_x = max(location[1] for location in notes_locations.keys())
+
+            # Create column headers
+            columns = [str(i) for i in range(min_x, max_x + 1)]
+
+            # Create empty rows
+            data_notes = []
+            for y in range(min_y, max_y + 1):
+                row = []
+                for x in range(min_x, max_x + 1):
+                    if (y, x) in notes_locations:
+                        row.append(str(notes_locations[(y, x)].text))
+                    else:
+                        row.append("")
+                data_notes.append(row)
+
+            # Convert data_notes to DataFrame and set columns
+            notes_df = DataFrame(data_notes, columns=columns)
+
+            # Update the notes DataFrame with the new data
+            for col in notes_df.columns:
+                notes[col] = notes_df[col]
+
         return [
             [
                 _parse_cell(value, typ)
@@ -138,3 +170,4 @@ class XlrdReader(BaseExcelReader["Book"]):
             ]
             for i in range(nrows)
         ]
+

@@ -391,6 +391,7 @@ def read_excel(
     skipfooter: int = ...,
     storage_options: StorageOptions = ...,
     dtype_backend: DtypeBackend | lib.NoDefault = ...,
+    notes: DataFrame | None = None,
 ) -> DataFrame: ...
 
 
@@ -428,6 +429,7 @@ def read_excel(
     skipfooter: int = ...,
     storage_options: StorageOptions = ...,
     dtype_backend: DtypeBackend | lib.NoDefault = ...,
+    notes: DataFrame | None = None,
 ) -> dict[IntStrT, DataFrame]: ...
 
 
@@ -466,6 +468,7 @@ def read_excel(
     storage_options: StorageOptions | None = None,
     dtype_backend: DtypeBackend | lib.NoDefault = lib.no_default,
     engine_kwargs: dict | None = None,
+    notes: DataFrame | None = None,
 ) -> DataFrame | dict[IntStrT, DataFrame]:
     check_dtype_backend(dtype_backend)
     should_close = False
@@ -510,6 +513,7 @@ def read_excel(
             comment=comment,
             skipfooter=skipfooter,
             dtype_backend=dtype_backend,
+            notes=notes,
         )
     finally:
         # make sure to close opened file handles
@@ -586,7 +590,7 @@ class BaseExcelReader(Generic[_WorkbookT]):
     def get_sheet_by_index(self, index: int):
         raise NotImplementedError
 
-    def get_sheet_data(self, sheet, rows: int | None = None):
+    def get_sheet_data(self, sheet, rows: int | None = None, notes: DataFrame | None = None):
         raise NotImplementedError
 
     def raise_if_bad_sheet_by_index(self, index: int) -> None:
@@ -714,6 +718,7 @@ class BaseExcelReader(Generic[_WorkbookT]):
         comment: str | None = None,
         skipfooter: int = 0,
         dtype_backend: DtypeBackend | lib.NoDefault = lib.no_default,
+        notes: DataFrame | None = None,
         **kwds,
     ):
         validate_header_arg(header)
@@ -751,7 +756,7 @@ class BaseExcelReader(Generic[_WorkbookT]):
                 sheet = self.get_sheet_by_index(asheetname)
 
             file_rows_needed = self._calc_rows(header, index_col, skiprows, nrows)
-            data = self.get_sheet_data(sheet, file_rows_needed)
+            data = self.get_sheet_data(sheet, file_rows_needed, notes=notes)
             if hasattr(sheet, "close"):
                 # pyxlsb opens two TemporaryFiles
                 sheet.close()
@@ -1633,6 +1638,7 @@ class ExcelFile:
         comment: str | None = None,
         skipfooter: int = 0,
         dtype_backend: DtypeBackend | lib.NoDefault = lib.no_default,
+        notes: DataFrame | None = None,
         **kwds,
     ) -> DataFrame | dict[str, DataFrame] | dict[int, DataFrame]:
         """
@@ -1780,6 +1786,7 @@ class ExcelFile:
             comment=comment,
             skipfooter=skipfooter,
             dtype_backend=dtype_backend,
+            notes=notes,
             **kwds,
         )
 
