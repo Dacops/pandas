@@ -553,8 +553,8 @@ class ExcelFormatter:
     ) -> None:
         self.rowcounter = 0
         self.na_rep = na_rep
+        self.notes = None
         if not isinstance(df, DataFrame):
-            self.notes = None
             if df.tooltips is not None:
                 self.notes = df.tooltips.tt_data
             self.styler = df
@@ -947,11 +947,11 @@ class ExcelFormatter:
         try:
             writer._write_cells(
                 formatted_cells,
-                self.notes,
                 sheet_name,
                 startrow=startrow,
                 startcol=startcol,
                 freeze_panes=freeze_panes,
+                notes=self.notes,
             )
         finally:
             # make sure to close opened file handles

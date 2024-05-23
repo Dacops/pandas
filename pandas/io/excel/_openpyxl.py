@@ -445,11 +445,11 @@ class OpenpyxlWriter(ExcelWriter):
     def _write_cells(
         self,
         cells,
-        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
         freeze_panes: tuple[int, int] | None = None,
+        notes: DataFrame | None = None,
     ) -> None:
         from openpyxl.comments import Comment
 

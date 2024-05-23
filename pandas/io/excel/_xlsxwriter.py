@@ -20,6 +20,8 @@ if TYPE_CHECKING:
         WriteExcelBuffer,
     )
 
+    from pandas.core.frame import DataFrame
+
 
 class _XlsxStyler:
     # Map from openpyxl-oriented styles to flatter xlsxwriter representation
@@ -241,11 +243,11 @@ class XlsxWriter(ExcelWriter):
     def _write_cells(
         self,
         cells,
-        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
         freeze_panes: tuple[int, int] | None = None,
+        notes: DataFrame | None = None,
     ) -> None:
         # Write the frame cells using xlsxwriter.
         sheet_name = self._get_sheet_name(sheet_name)
