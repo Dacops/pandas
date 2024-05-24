@@ -104,3 +104,18 @@ def test_cell_value_type(
         cell = sheet_cells[0]
         assert cell.attributes.get((OFFICENS, "value-type")) == cell_value_type
         assert cell.attributes.get((OFFICENS, cell_value_attribute)) == cell_value
+
+
+def test_exception_write_with_notes(tmp_excel):
+    with pytest.raises(
+        NotImplementedError,
+        match="""
+                Notes are not supported by the odswriter engine,
+                see https://github.com/mmulqueen/odswriter
+                """,
+    ):
+        notes = pd.DataFrame([["note 1", "note 2"], ["", "note 4"], ["note 5", ""]])
+
+        df = pd.DataFrame([[1, 2], [3, 4], [5, 6]])
+
+        df.style.set_tooltips(notes).to_excel(tmp_excel)

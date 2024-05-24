@@ -429,3 +429,12 @@ def test_read_multiindex_header_no_index_names(datapath, ext):
         index=pd.MultiIndex.from_tuples([("A", "AA", "AAA"), ("A", "BB", "BBB")]),
     )
     tm.assert_frame_equal(result, expected)
+
+
+def test_read_notes_from_xlsx_files(datapath, ext):
+    path = datapath("io", "data", "excel", f"test_read_notes{ext}")
+    expected = DataFrame([["note 1", "note 2"], ["", "note 4"], ["note 5", ""]])
+    result = DataFrame()
+    pd.read_excel(path, engine="openpyxl", notes=result)
+    
+    tm.assert_frame_equal(result, expected)

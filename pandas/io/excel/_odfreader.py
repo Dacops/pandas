@@ -117,7 +117,7 @@ class ODFReader(BaseExcelReader["OpenDocument"]):
         if notes is not None:
             raise NotImplementedError(
                 """
-                Notes are not supported in odfreader engine,
+                Notes are not supported by the odfreader engine,
                 see https://github.com/eea/odfpy
                 """
             )

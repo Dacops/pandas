@@ -334,6 +334,153 @@ class TestRoundTrip:
         )
         tm.assert_frame_equal(result, expected)
 
+    def test_read_write_with_notes(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["note 1", "note 2", "note 3"],
+                    ["note 1", "note 2", "note 3"],
+                    ["note 1", "note 2", "note 3"],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_trim_rows(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["", "", ""],
+                    ["note 1", "note 2", "note3"],
+                    ["", "", ""],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_trim_columns(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["", "note 2", ""],
+                    ["", "note 2", ""],
+                    ["", "note 2", ""],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_trim_rows_and_columns(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["", "", ""],
+                    ["", "note 2", ""],
+                    ["", "", ""],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_empty_comments_no_trim(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["note 1", "", ""],
+                    ["", "", ""],
+                    ["", "", "note 3"],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_smaller_dimensions(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["note 1", "note 2"],
+                    ["note 1", "note 2"],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
+    def test_read_write_with_notes_bigger_dimensions(self, tmp_excel, ext):
+        if ext in ["xlsm", "xlsx"]:
+            expected = DataFrame(
+                [
+                    ["note 1", "note 2", "note 3", "note 4"],
+                    ["note 1", "note 2", "note 3", "note 4"],
+                    ["note 1", "note 2", "note 3", "note 4"],
+                    ["note 1", "note 2", "note 3", "note 4"],
+                ]
+            )
+            df = DataFrame(
+                [
+                    [1, 100, 200],
+                    [2, 200, 300],
+                    [3, 300, 400],
+                ]
+            )
+            df.style.set_tooltips(expected).to_excel(tmp_excel)
+            result = DataFrame()
+            result = pd.read_excel(tmp_excel, notes=result)
+            tm.assert_frame_equal(result, expected)
+
 
 @pytest.mark.parametrize(
     "engine,ext",

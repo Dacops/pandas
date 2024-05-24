@@ -7,6 +7,10 @@ from pandas import DataFrame
 
 from pandas.io.excel import ExcelWriter
 
+import pandas as pd
+
+import pandas._testing as tm
+
 xlsxwriter = pytest.importorskip("xlsxwriter")
 
 

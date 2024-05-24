@@ -70,3 +70,15 @@ def test_read_cell_annotation():
     result = pd.read_excel("test_cell_annotation.ods")
 
     tm.assert_frame_equal(result, expected)
+
+
+def test_exception_read_with_notes():
+    with pytest.raises(
+        NotImplementedError,
+        match="""
+                Notes are not supported by the odfreader engine,
+                see https://github.com/eea/odfpy
+                """,
+    ):
+        df_notes = pd.DataFrame()
+        pd.read_excel("test_unempty_cells.ods", notes=df_notes)

@@ -69,3 +69,17 @@ def test_read_old_xls_files(file_header):
     # GH 41226
     f = io.BytesIO(file_header)
     assert inspect_excel_format(f) == "xls"
+
+
+def test_read_notes_from_xls_files(datapath, read_ext_xlrd):
+    expected = pd.DataFrame("", index=range(10), columns=range(10))
+
+    # Set specific values at (0, 0) and (10, 10)
+    expected.iloc[0, 0] = "note 1x1"
+    expected.iloc[9, 9] = "note 10x10"
+    path = datapath("io", "data", "excel", f"test_read_notes{read_ext_xlrd}")
+    result = pd.DataFrame()
+    pd.read_excel(path, engine="xlrd", notes=result)
+
+    tm.assert_frame_equal(result, expected)
+    
