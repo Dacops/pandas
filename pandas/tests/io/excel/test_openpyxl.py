@@ -436,5 +436,5 @@ def test_read_notes_from_xlsx_files(datapath, ext):
     expected = DataFrame([["note 1", "note 2"], ["", "note 4"], ["note 5", ""]])
     result = DataFrame()
     pd.read_excel(path, engine="openpyxl", notes=result)
-    
+
     tm.assert_frame_equal(result, expected)

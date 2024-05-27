@@ -281,7 +281,7 @@ dtype_backend : {{'numpy_nullable', 'pyarrow'}}, default 'numpy_nullable'
 engine_kwargs : dict, optional
     Arbitrary keyword arguments passed to excel engine.
 
-notes: DataFrame, default None
+notes : DataFrame, default None
     A DataFrame to hold the notes extracted from the Excel file.
 
 Returns
@@ -368,6 +368,10 @@ Cells with no notes inside these limits will have an empty string ("").
 If the data in the ``tmp.xlsx`` file was written using the
 ``set_tooltips(notes)`` method of ``Styler.to_excel``, like in
 the example below:
+
+>>> df = pd.DataFrame(
+...     [[1, 100, 200], [2, 200, 300], [3, 300, 400]],
+... )  # doctest: +SKIP
 
 >>> notes = pd.DataFrame(
 ...     [["note 1", "note 2"], ["", "note 4"], ["note 5", ""]],
@@ -1254,11 +1258,11 @@ class ExcelWriter(Generic[_WorkbookT]):
     def _write_cells(
         self,
         cells,
-        notes,
         sheet_name: str | None = None,
         startrow: int = 0,
         startcol: int = 0,
         freeze_panes: tuple[int, int] | None = None,
+        notes: DataFrame | None = None,
     ) -> None:
         """
         Write given formatted cells into Excel an excel sheet
@@ -1788,6 +1792,8 @@ class ExcelFile:
               DataFrame.
 
             .. versionadded:: 2.0
+        notes : DataFrame, default None
+            A DataFrame to hold the notes extracted from the Excel file.
         **kwds : dict, optional
             Arbitrary keyword arguments passed to excel engine.
 

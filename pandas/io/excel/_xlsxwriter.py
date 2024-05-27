@@ -290,7 +290,7 @@ class XlsxWriter(ExcelWriter):
                     notes_col = startcol + cell.col
                 wks.write(startrow + cell.row, startcol + cell.col, val, style)
 
-        if notes is None:
+        if notes is None or notes_col is None:
             return
 
         for row_idx, (_, row) in enumerate(notes.iterrows()):

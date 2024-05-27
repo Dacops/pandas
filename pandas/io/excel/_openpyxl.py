@@ -539,7 +539,7 @@ class OpenpyxlWriter(ExcelWriter):
                             for k, v in style_kwargs.items():
                                 setattr(xcell, k, v)
 
-        if notes is None:
+        if notes is None or notes_col is None:
             return
 
         for row_idx, (_, row) in enumerate(notes.iterrows()):

@@ -82,4 +82,3 @@ def test_read_notes_from_xls_files(datapath, read_ext_xlrd):
     pd.read_excel(path, engine="xlrd", notes=result)
 
     tm.assert_frame_equal(result, expected)
-    
