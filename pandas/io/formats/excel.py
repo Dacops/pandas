@@ -884,7 +884,8 @@ class ExcelFormatter:
             yield cell
 
     def get_notes(self) -> Iterable[str]:
-        yield from self.notes.iterrows()
+        if self.notes:
+            yield from self.notes.iterrows()
 
     @doc(storage_options=_shared_docs["storage_options"])
     def write(

@@ -542,8 +542,8 @@ class OpenpyxlWriter(ExcelWriter):
         if notes is None or notes_col is None:
             return
 
-        for row_idx, (_, row) in enumerate(notes.iterrows()):
-            for col_idx, note in enumerate(row):
+        for row_idx, (_, val) in enumerate(notes.iterrows()):
+            for col_idx, note in enumerate(val):
                 xcell = wks.cell(
                     row=row_idx + 2,  # openpyxl starts counting at 1, not 0
                     column=col_idx + notes_col,

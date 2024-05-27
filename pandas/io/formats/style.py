@@ -82,24 +82,7 @@ if TYPE_CHECKING:
 
     from pandas import ExcelWriter
 
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
-
-    has_mpl = True
-except ImportError:
-    has_mpl = False
-
 import textwrap
-
-
-@contextmanager
-def _mpl(func: Callable) -> Generator[tuple[Any, Any], None, None]:
-    if has_mpl:
-        yield plt, mpl
-    else:
-        raise ImportError(f"{func.__name__} requires matplotlib.")
-
 
 ####
 # Shared Doc Strings

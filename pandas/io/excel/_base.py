@@ -514,10 +514,6 @@ def read_excel(
     if engine_kwargs is None:
         engine_kwargs = {}
 
-        # set to false so cells have a comment attribute
-        if notes is not None and engine == "openpyxl":
-            engine_kwargs = {"read_only": False}
-
     if not isinstance(io, ExcelFile):
         should_close = True
         io = ExcelFile(
@@ -525,6 +521,7 @@ def read_excel(
             storage_options=storage_options,
             engine=engine,
             engine_kwargs=engine_kwargs,
+            notes=notes,
         )
     elif engine and engine != io.engine:
         raise ValueError(
@@ -1574,6 +1571,8 @@ class ExcelFile:
     {storage_options}
     engine_kwargs : dict, optional
         Arbitrary keyword arguments passed to excel engine.
+    notes : DataFrame, default None
+        DataFrame that holds notes of the Excel file.
 
     See Also
     --------
@@ -1609,6 +1608,7 @@ class ExcelFile:
         engine: str | None = None,
         storage_options: StorageOptions | None = None,
         engine_kwargs: dict | None = None,
+        notes: DataFrame | None = None,
     ) -> None:
         if engine_kwargs is None:
             engine_kwargs = {}
@@ -1654,6 +1654,10 @@ class ExcelFile:
         assert engine is not None
         self.engine = engine
         self.storage_options = storage_options
+
+        # set so the engine can access the notes from a cell
+        if notes is not None and engine == "openpyxl":
+            engine_kwargs.update({"read_only": False})
 
         self._reader = self._engines[engine](
             self._io,
